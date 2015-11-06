@@ -1,2 +1,2 @@
 # gpgerror-d
-D Programming Language binding for libgpg-error
+D Programming Language binding for libgpg-error.
