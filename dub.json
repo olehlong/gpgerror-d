@@ -1,0 +1,22 @@
+{
+	"name" : "gpgerror-d",
+	"description" : "D Programming Language binding for libgpg-error",
+	"license": "MIT",
+	"authors": [
+		"Oleh Havrys"
+	],
+	
+	"libs-posix" : ["gpg-error"],
+	
+	"configurations" : [
+		{
+			"name": "library",
+			"targetType": "library"
+		},
+		{
+			"name": "unittest",
+			"mainSourceFile": "src/app.d",
+			"targetType": "executable"
+		}
+	]
+}
