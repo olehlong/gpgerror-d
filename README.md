@@ -1,4 +1,19 @@
 # gpgerror-d
 D Programming Language binding for libgpg-error.
 
-**Code doesn't work yet.**
+## Installation
+
+See [DUB page](http://code.dlang.org/packages/gpgerror-d).
+
+## Building
+
+```
+dub build 
+```
+
+## Testing
+
+```
+dub test
+```
+
