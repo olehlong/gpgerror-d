@@ -595,7 +595,7 @@ extern(C) nothrow @nogc {
 }
 
 /* The version string of this header. */
-enum GPG_ERROR_VERSION = "1.17";
+static const(char*) GPG_ERROR_VERSION = "1.17";
 
 /* The version number of this header. */
 enum GPG_ERROR_VERSION_NUMBER = 0x011100;
@@ -970,6 +970,77 @@ extern(C) nothrow @nogc {
 	alias es_vasprintf = gpgrt_vasprintf;
 	alias es_bsprintf = gpgrt_bsprintf;
 	alias es_vbsprintf = gpgrt_vbsprintf;
+}
+
+version(unittest) {
+	import std.stdio : printf, write, writeln;
+	import std.conv;
+	
+	import core.stdc.errno;
+	
+}
+
+unittest {
+	
+	// version test
+	
+	printf("Version from header: %s (0x%06x)\n", GPG_ERROR_VERSION, GPG_ERROR_VERSION_NUMBER);
+    printf("Version from binary: %s\n", gpg_error_check_version(null));
+	
+	write("Test: version ... ");
+	
+	assert(gpg_error_check_version(GPG_ERROR_VERSION) != null);
+	assert(gpg_error_check_version("1.10") != null);
+	assert(gpg_error_check_version("15") == null);
+	
+	writeln("SUCCESS");
+	
+	// syserror test
+	
+	write("Test: syserror ... ");
+	
+	FILE* fp;
+	int save_errno;
+	gpg_err_code_t ec;
+	
+	fp = fopen("/does-not-exist/110761/nowhere.foo", "r");
+	if(fp) {
+		fclose(fp);
+		fp = fopen("  no this file does not exists foo 4711", "r");
+	}
+	
+	save_errno = errno;
+	
+	ec = gpg_err_code_from_syserror();
+	
+	assert(ec == gpg_err_code_t.GPG_ERR_ENOENT);
+	assert(ec == gpg_err_code_from_errno(save_errno));
+	
+	gpg_err_set_errno(0);
+	ec = gpg_err_code_from_syserror();
+	
+	assert(ec == gpg_err_code_t.GPG_ERR_MISSING_ERRNO);
+	assert(gpg_err_code_from_errno(0) == gpg_err_code_t.GPG_ERR_NO_ERROR);
+	
+	writeln("SUCCESS");
+	
+	// strerror test
+	
+	write("Test: strerror ... ");
+	
+	gpg_error_t err = gpg_err_make(cast(gpg_err_source_t)7, cast(gpg_err_code_t)7);
+	assert(to!string(gpg_strsource(err)) == "GPGME");
+	assert(to!string(gpg_strerror(err)) == "Bad secret key");
+	
+	writeln("SUCCESS");
+	
+	// printf test
+	
+	// TODO: add printf test if needed
+	
+	// lock test
+	
+	// TODO: add lock test if needed
 }
 
 
